@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+	<p:messages id="msg" showDetail="true" autoUpdate="false" />
+	<h:form id="gridForm">
+		<p:dataGrid var="r" value="#{lernSessionController.getCurrentBenutzerLernSessions()}" columns="3"
+			layout="grid" rows="15" paginator="true" id="grid"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			<f:facet name="header">
+				<p:commandButton icon="ui-icon-plus" styleClass="ui-btn-inline"
+					actionListener="#{lernSessionController.newRecord()}"
+					update=":lernSession:editForm" value="LernSession hinzufügen"
+					oncomplete="PF('editLernSessionDialog').show()" />
+			</f:facet>
+			<p:panel header="#{r}" style="text-align:center">
+				<h:panelGrid columns="3" style="width:100%">
+
+					<p:commandButton icon="ui-icon-action" styleClass="ui-btn-inline"
+						title="lernen" actionListener="#{lernViewController.setCurentLernSession(r)}"
+						update=":lern" oncomplete="$('#lernSession\\:gridForm\\:hiddenLern').click()" />
+						
+					<p:commandButton icon="ui-icon-edit" styleClass="ui-btn-inline"
+						title="bearbeiten"
+						actionListener="#{lernSessionController.setSelectedRecord(r)}"
+						update=":lernSession:editForm" oncomplete="PF('editLernSessionDialog').show()" />
+						
+					<p:commandButton icon="ui-icon-delete" title="löschen"
+						styleClass="ui-btn-inline"
+						actionListener="#{lernSessionController.setSelectedRecord(r)}"
+						update=":lernSession:deleteForm" oncomplete="PF('deleteLernSessionDialog').show()" />
+				</h:panelGrid>
+			</p:panel>
+		</p:dataGrid>
+		<p:button outcome="pm:lern" id="hiddenLern" style="display:none;" value="Lernen" icon="ui-icon-info" />
+	</h:form>
+
+
+	<p:dialog id="editLernSessionDialog" widgetVar="editLernSessionDialog" >
+		<h:form id="editForm">
+			<p:focus context="editForm"/>
+			<pm:field>
+				<p:dataList value="#{kapitelController.records}" var="r" paginator="true" rows="5">
+				    <f:facet name="header">
+				        Kapitel
+				    </f:facet>
+				    <p:panelGrid columns="3">
+						#{r.kapitel}
+						<p:commandButton id="addBtn" update="removeBtn addBtn" icon="ui-icon-check" actionListener="#{lernSessionController.selectedKapitelList.add(r)}" disabled="#{lernSessionController.selectedKapitelList.contains(r)}" />
+						<p:commandButton id="removeBtn" update="removeBtn addBtn" icon="ui-icon-delete" actionListener="#{lernSessionController.selectedKapitelList.remove(r)}" disabled="#{not lernSessionController.selectedKapitelList.contains(r)}" />
+					</p:panelGrid>
+				</p:dataList>  
+			</pm:field>
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":lernSession:msg :lernSession:gridForm"
+					validateClient="true" title="speichern" styleClass="ui-btn-inline"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editLernSessionDialog').hide()"
+					action="#{lernSessionController.saveSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="deleteLernSessionDialog" widgetVar="deleteLernSessionDialog" appendTo="@(body)"
+		modal="true">
+		<h:form id="deleteForm">
+			<p:panelGrid columns="1">
+				<p:outputLabel
+					value="Soll die LernSession '#{lernSessionController.selectedRecord}' wirklich gelöscht werden ?" />
+			</p:panelGrid>
+
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":lernSession:msg :lernSession:gridForm"
+					validateClient="true" styleClass="ui-btn-inline" title="ja"
+					onclick="PF('deleteLernSessionDialog').hide()"
+					action="#{lernSessionController.deleteSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</html>

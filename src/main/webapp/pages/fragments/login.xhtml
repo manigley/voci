@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+<script>
+					$(document).ready(function() {
+						setTimeout(function() {
+								PF('loingDialog').show()
+							;}, 500);
+					});
+			</script>
+<pm:page id="login">
+	<pm:header title="Login"></pm:header>
+	<p:dialog showEffect="size" closable="false" modal="true"
+		appendTo="@(body)" header="Login" visible="true"
+		widgetVar="loingDialog" id="loingDialog">
+		<p:messages autoUpdate="false" id="msg" />
+		<h:form>
+			<p:focus context="loginBtn" />
+			<pm:field>
+				<p:outputLabel value="Benutzer" for="user" />
+
+				<p:inputText id="user" value="#{username}" required="true" />
+			</pm:field>
+
+			<pm:field>
+				<p:outputLabel value="Passwort" for="pass" />
+
+				<p:password id="pass" value="#{pass}" required="true" />
+			</pm:field>
+			<p:panelGrid columns="1" style="width:100%;text-align:center;">
+				<p:commandButton id="loginBtn" validateClient="true"
+					icon="ui-icon-check" update="@all"
+					actionListener="#{sessionBean.login(username, pass)}"
+					oncomplete="location.reload()"
+					styleClass="ui-btn-inline" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</pm:page>
+</html>

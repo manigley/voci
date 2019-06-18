@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+	<p:messages id="msg" showDetail="true" autoUpdate="false" />
+	<h:form id="gridForm">
+		<p:dataGrid var="r" value="#{kapitelController.records}" columns="5"
+			layout="grid" rows="15" paginator="true" id="grid"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			<f:facet name="header">
+				<p:commandButton icon="ui-icon-plus" styleClass="ui-btn-inline"
+					actionListener="#{kapitelController.newRecord()}"
+					update=":kapitel:editForm" value="Kapitel hinzufügen"
+					oncomplete="PF('editKapitelDialog').show()" />
+			</f:facet>
+			<p:panel header="#{r.kapitel}" style="text-align:center">
+				<h:panelGrid columns="2" style="width:100%">
+					<p:commandButton icon="ui-icon-edit" styleClass="ui-btn-inline"
+						title="bearbeiten"
+						actionListener="#{kapitelController.setSelectedRecord(r)}"
+						update=":kapitel:editForm" oncomplete="PF('editKapitelDialog').show()" />
+					<p:commandButton icon="ui-icon-delete" title="löschen"
+						styleClass="ui-btn-inline"
+						actionListener="#{kapitelController.setSelectedRecord(r)}"
+						update=":kapitel:deleteForm" oncomplete="PF('deleteKapitelDialog').show()" />
+				</h:panelGrid>
+			</p:panel>
+		</p:dataGrid>
+	</h:form>
+
+	<p:dialog id="editKapitelDialog" widgetVar="editKapitelDialog" appendTo="@(body)"
+		modal="true">
+		<h:form id="editForm">
+			<p:focus context="editForm"/>
+			<pm:field>
+				<p:outputLabel id="kapitel" for="kapitelIn" value="Kapitel" />
+
+				<p:inputText id="kapitelIn"
+					value="#{kapitelController.selectedRecord.kapitel}" required="true" />
+			</pm:field>
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":kapitel:msg :kapitel:gridForm"
+					validateClient="true" title="speichern" styleClass="ui-btn-inline"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editKapitelDialog').hide()"
+					action="#{kapitelController.saveSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="deleteKapitelDialog" widgetVar="deleteKapitelDialog" appendTo="@(body)"
+		modal="true">
+		<h:form id="deleteForm">
+			<p:panelGrid columns="1">
+				<p:outputLabel
+					value="Soll die Kapitel '#{kapitelController.selectedRecord.kapitel}' wirklich gelöscht werden ?" />
+			</p:panelGrid>
+
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":kapitel:msg :kapitel:gridForm"
+					validateClient="true" styleClass="ui-btn-inline" title="ja"
+					onclick="PF('deleteKapitelDialog').hide()"
+					action="#{kapitelController.deleteSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</html>

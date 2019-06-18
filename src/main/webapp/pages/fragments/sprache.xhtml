@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+	<p:messages id="msg" showDetail="true" autoUpdate="false" />
+	<h:form id="gridForm">
+		<p:dataGrid var="r" value="#{spracheController.records}" columns="5"
+			layout="grid" rows="15" paginator="true" id="grid"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			<f:facet name="header">
+				<p:commandButton icon="ui-icon-plus" styleClass="ui-btn-inline"
+					actionListener="#{spracheController.newRecord()}"
+					update=":sprache:editForm" value="Sprache hinzufügen"
+					oncomplete="PF('editSpracheDialog').show()" />
+			</f:facet>
+			<p:panel header="#{r.sprache}" style="text-align:center">
+				<h:panelGrid columns="2" style="width:100%">
+					<p:commandButton icon="ui-icon-edit" styleClass="ui-btn-inline"
+						title="bearbeiten"
+						actionListener="#{spracheController.setSelectedRecord(r)}"
+						update=":sprache:editForm" oncomplete="PF('editSpracheDialog').show()" />
+					<p:commandButton icon="ui-icon-delete" title="löschen"
+						styleClass="ui-btn-inline"
+						actionListener="#{spracheController.setSelectedRecord(r)}"
+						update=":sprache:deleteForm" oncomplete="PF('deleteSpracheDialog').show()" />
+				</h:panelGrid>
+			</p:panel>
+		</p:dataGrid>
+	</h:form>
+
+	<p:dialog id="editSpracheDialog" widgetVar="editSpracheDialog" appendTo="@(body)"
+		modal="true">
+		<h:form id="editForm">
+			<p:focus context="editForm"/>
+			<pm:field>
+				<p:outputLabel id="sprache" for="spracheIn" value="Sprache" />
+
+				<p:inputText id="spracheIn"
+					value="#{spracheController.selectedRecord.sprache}" required="true" />
+			</pm:field>
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":sprache:msg :sprache:gridForm"
+					validateClient="true" title="speichern" styleClass="ui-btn-inline"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editSpracheDialog').hide()"
+					action="#{spracheController.saveSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="deleteSpracheDialog" widgetVar="deleteSpracheDialog" appendTo="@(body)"
+		modal="true">
+		<h:form id="deleteForm">
+			<p:panelGrid columns="1">
+				<p:outputLabel
+					value="Soll die Sprache '#{spracheController.selectedRecord.sprache}' wirklich gelöscht werden ?" />
+			</p:panelGrid>
+
+			<p:panelGrid columns="1" style="text-align:center;">
+				<p:commandButton icon="ui-icon-check" update=":sprache:msg :sprache:gridForm"
+					validateClient="true" styleClass="ui-btn-inline" title="ja"
+					onclick="PF('deleteSpracheDialog').hide()"
+					action="#{spracheController.deleteSelected()}" />
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</html>

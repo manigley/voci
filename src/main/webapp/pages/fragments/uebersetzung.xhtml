@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<p:messages id="msg" showDetail="true" autoUpdate="false" />
+<h:form id="gridForm">
+	<p:dataGrid var="r" value="#{uebersetzungEditorController.records}"
+		columns="5" layout="grid" rows="15" paginator="true" id="grid"
+		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+		<f:facet name="header">
+			<p:commandButton icon="ui-icon-plus" styleClass="ui-btn-inline"
+				actionListener="#{uebersetzungEditorController.newRecord()}"
+				update=":uebersetzung:editForm" value="Uebersetzung hinzufügen"
+				oncomplete="PF('editUebersetzungDialog').show()" />
+		</f:facet>
+		<p:panel header="#{r.kapitel.kapitel}" style="text-align:center">
+			<h:panelGrid columns="1" style="width:100%">
+				<p:outputLabel
+					value="#{r.muttersprache.sprache.sprache} zu #{r.fremdsprache.sprache.sprache}" />
+				<p:outputLabel
+					value="#{r.muttersprache.text} zu #{r.fremdsprache.text}" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" style="width:100%">
+				<p:commandButton icon="ui-icon-edit" styleClass="ui-btn-inline"
+					title="bearbeiten"
+					actionListener="#{uebersetzungEditorController.setSelectedRecord(r)}"
+					update=":uebersetzung:editForm"
+					oncomplete="PF('editUebersetzungDialog').show()" />
+				<p:commandButton icon="ui-icon-delete" title="löschen"
+					styleClass="ui-btn-inline"
+					actionListener="#{uebersetzungEditorController.setSelectedRecord(r)}"
+					update=":uebersetzung:deleteForm"
+					oncomplete="PF('deleteUebersetzungDialog').show()" />
+			</h:panelGrid>
+		</p:panel>
+	</p:dataGrid>
+</h:form>
+
+<p:dialog id="editUebersetzungDialog" widgetVar="editUebersetzungDialog"
+	appendTo="@(body)" modal="true">
+	<h:form id="editForm">
+
+		<p:focus context="editForm" />
+
+		<pm:field>
+			<p:outputLabel value="Kapitel:" for="kapitel" />
+
+			<p:selectOneMenu converter="#{kapitelConverter}" id="kapitel"
+				value="#{uebersetzungEditorController.selectedRecord.kapitel}"
+				required="true">
+				<f:selectItem itemLabel="" itemValue="#{null}" />
+				<f:selectItems value="#{kapitelController.records}" var="i"
+					itemLabel="#{i.kapitel}" itemValue="#{i}" />
+				<p:ajax update="@this" />
+			</p:selectOneMenu>
+		</pm:field>
+		<p:panelGrid columns="2">
+			<p:column>
+				<pm:field>
+					<p:outputLabel value="Muttersprache:" for="muttersprache" />
+
+					<p:selectOneMenu converter="#{spracheConverter}" id="muttersprache"
+						value="#{uebersetzungEditorController.selectedRecord.muttersprache.sprache}"
+						required="true">
+						<f:selectItem itemLabel="" itemValue="#{null}" />
+						<f:selectItems value="#{spracheController.records}" var="i"
+							itemLabel="#{i.sprache}" itemValue="#{i}"
+							itemDisabled="#{uebersetzungEditorController.selectedRecord.fremdsprache.sprache.id eq i.id}" />
+						<p:ajax update="@this fremdsprache mutterspracheUebersetzung" />
+					</p:selectOneMenu>
+				</pm:field>
+				<pm:field>
+					<p:outputLabel value="Fremdsprache:" for="fremdsprache" />
+
+					<p:selectOneMenu converter="#{spracheConverter}" id="fremdsprache"
+						value="#{uebersetzungEditorController.selectedRecord.fremdsprache.sprache}"
+						required="true">
+						<f:selectItem itemLabel="" itemValue="#{null}" />
+						<f:selectItems value="#{spracheController.records}" var="i"
+							itemLabel="#{i.sprache}" itemValue="#{i}"
+							itemDisabled="#{uebersetzungEditorController.selectedRecord.muttersprache.sprache.id eq i.id}" />
+						<p:ajax update="@this muttersprache fremdspracheUebersetzung" />
+					</p:selectOneMenu>
+				</pm:field>
+			</p:column>
+			<p:column>
+				<pm:field>
+					<p:outputLabel value="Muttersprache:"
+						for="mutterspracheUebersetzung" />
+					<p:autoComplete id="mutterspracheUebersetzung" required="true" autocomplete="off"
+						disabled="#{empty uebersetzungEditorController.selectedRecord.muttersprache.sprache}"
+						value="#{uebersetzungEditorController.selectedRecord.muttersprache.text}"
+						completeMethod="#{uebersetzungEditorController.autoCompleteMuttersprache}" />
+				</pm:field>
+				<pm:field>
+					<p:outputLabel value="Fremdsprache:" for="fremdspracheUebersetzung" />
+					<p:autoComplete id="fremdspracheUebersetzung" required="true"  autocomplete="off"
+						disabled="#{empty uebersetzungEditorController.selectedRecord.fremdsprache.sprache}"
+						value="#{uebersetzungEditorController.selectedRecord.fremdsprache.text}"
+						completeMethod="#{uebersetzungEditorController.autoCompleteFremdsprache}" />
+				</pm:field>
+			</p:column>
+		</p:panelGrid>
+		<p:panelGrid columns="1" style="text-align:center;">
+			<p:commandButton title="save" icon="ui-icon-check"
+				update=":uebersetzung:msg :uebersetzung:gridForm"
+				validateClient="true"
+				actionListener="#{uebersetzungEditorController.saveSelected()}" />
+		</p:panelGrid>
+	</h:form>
+</p:dialog>
+
+<p:dialog id="deleteUebersetzungDialog"
+	widgetVar="deleteUebersetzungDialog" appendTo="@(body)" modal="true">
+	<h:form id="deleteForm">
+		<p:panelGrid columns="1" style="text-align:center;">
+			<p:outputLabel
+				value="Soll die Uebersetzung wirklich gelöscht werden ?" />
+			<p:outputLabel
+				value="#{uebersetzungEditorController.selectedRecord.muttersprache.sprache.sprache} zu #{uebersetzungEditorController.selectedRecord.fremdsprache.sprache.sprache}" />
+			<p:outputLabel
+				value="#{uebersetzungEditorController.selectedRecord.muttersprache.text} zu #{uebersetzungEditorController.selectedRecord.fremdsprache.text}" />
+		</p:panelGrid>
+
+		<p:panelGrid columns="1" style="text-align:center;">
+			<p:commandButton icon="ui-icon-check"
+				update=":uebersetzung:msg :uebersetzung:gridForm"
+				validateClient="true" styleClass="ui-btn-inline" title="ja"
+				onclick="PF('deleteUebersetzungDialog').hide()"
+				action="#{uebersetzungEditorController.deleteSelected()}" />
+		</p:panelGrid>
+	</h:form>
+</p:dialog>
+</html>

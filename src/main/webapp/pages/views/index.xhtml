@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+
+<h:head>
+
+</h:head>
+
+<h:body>
+	<c:choose>
+		<c:when test="#{empty sessionBean.benutzer}"> 
+				<ui:include src="../fragments/login.xhtml" />
+		</c:when>
+		<c:otherwise>
+
+			<pm:page id="first">
+				<pm:header title="Welcom"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+			</pm:page>
+
+			<pm:page id="lernSession">
+				<pm:header title="LernenSession"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+				<pm:content>
+					<ui:include src="../fragments/lernSession.xhtml" />
+				</pm:content>
+			</pm:page>
+
+			<pm:page id="lern">
+				<pm:header title="Lernen"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+				<pm:content>
+					<ui:include src="../fragments/lern.xhtml" />
+				</pm:content>
+			</pm:page>
+			
+			<pm:page id="kapitel">
+				<pm:header title="Kapitel"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+				<pm:content>
+					<ui:include src="../fragments/kapitel.xhtml" />
+				</pm:content>
+			</pm:page>
+
+			<pm:page id="sprache">
+				<pm:header title="Sprachen"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+				<pm:content>
+					<ui:include src="../fragments/sprache.xhtml" />
+				</pm:content>
+			</pm:page>
+
+			<pm:page id="uebersetzung">
+				<pm:header title="Übersetzungen"></pm:header>
+				<ui:include src="../fragments/toolbar.xhtml" />
+
+				<pm:content>
+					<ui:include src="../fragments/uebersetzung.xhtml" />
+				</pm:content>
+			</pm:page>
+		</c:otherwise>
+	</c:choose>
+</h:body>
+
+</html>

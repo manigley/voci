@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+
+<p:messages id="msg" showDetail="true" autoUpdate="false" />
+<h:form id="selectLernsessionForm">
+	<pm:field rendered="#{empty lernViewController.toLern}">
+		<p:outputLabel for="selectLernType" value="Was willst du lernen" />
+		<p:selectOneMenu id="selectLernType" required="true"
+			value="#{lernViewController.selectedLernType}">
+			<f:selectItem itemLabel="" itemValue="" itemDisabled="true" />
+			<f:selectItems value="#{lernViewController.lernTypes}" var="i"
+				itemValue="#{i}" />
+			<p:ajax update="@this" />
+		</p:selectOneMenu>
+	</pm:field>
+	<p:commandButton update="lern:lernForm :lern:msg lern:selectLernsessionForm"
+		value="lade Übersetzungen" icon="ui-icon-check"
+		actionListener="#{lernViewController.initLernData()}"
+		validateClient="true" rendered="#{empty lernViewController.toLern}" />
+</h:form>
+<h:panelGroup id="lernForm">
+	<h:form rendered="#{not empty lernViewController.toLern}">
+	#{lernViewController.uebersetungCounter} / #{lernViewController.toLern.size()}
+		<pm:field>
+			<p:outputLabel for="uebersetzung"
+				value="#{lernViewController.curentLesnSessionUebersetzung.uebersetzungUebersetzung.muttersprache.text}" />
+			<p:inputText id="uebersetzung" autocomplete="off"
+				value="#{lernViewController.uebersetzung}" required="true" />
+		</pm:field>
+		<p:panelGrid columns="3" style="text-align:center;">
+			<p:commandButton update="lern:lernForm :lern:msg" title="prüfen"
+				icon="ui-icon-check" styleClass="ui-btn-inline"
+				actionListener="#{lernViewController.checkIfCorrect()}"
+				validateClient="true" />
+	
+			<p:commandButton update="lern:lernForm :lern:msg" title="überspringen"
+				icon="ui-icon-delete" styleClass="ui-btn-inline"
+				actionListener="#{lernViewController.nextUebersetzung()}"
+				validateClient="false" process="@this" immediate="true" />
+	
+			<p:commandButton icon="ui-icon-eye" title="lösung" styleClass="ui-btn-inline" oncomplete="PF('solutionDialog').show()" update="lern:solutionDialog" />
+		</p:panelGrid>
+	</h:form>
+	
+	<p:dialog id="solutionDialog" widgetVar="solutionDialog"	 header="Lösung">
+		<p:panelGrid columns="1" style="text-align:center;width:400px;">
+			<p:outputLabel value="#{lernViewController.curentLesnSessionUebersetzung.uebersetzungUebersetzung.fremdsprache.text}" />
+		</p:panelGrid>
+	</p:dialog>
+</h:panelGroup>
+</html>

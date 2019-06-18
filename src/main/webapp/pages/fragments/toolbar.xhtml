@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:form id="toolbar">
+	<p:toolbar>
+		<f:facet name="left">
+			<p:button outcome="pm:lernSession" value="Lernen" icon="ui-icon-info" />
+			
+			<p:button outcome="pm:lern" value="aktuelle LernSession wieder aufnehmen" icon="ui-icon-action"
+				rendered="#{not empty lernViewController.curentLesnSessionUebersetzung and not empty lernViewController.curentLesnSessionUebersetzung.uebersetzungUebersetzung}" />
+			
+		</f:facet>
+		<f:facet name="right">
+			<p:button outcome="pm:kapitel" value="Kapitel" icon="ui-icon-bullets" />
+			<p:button outcome="pm:sprache" value="Sprachen"
+				icon="ui-icon-bullets" />
+			<p:button outcome="pm:uebersetzung" value="Übersetzungen"
+				icon="ui-icon-action" />
+			<p:commandButton value="logout" icon="ui-icon-power"
+				actionListener="#{sessionBean.logout()}" update="@all" />
+		</f:facet>
+	</p:toolbar>
+</h:form>
+</html>
